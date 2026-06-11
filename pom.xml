@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>org.netxms</groupId>
+   <artifactId>webgl-resources</artifactId>
+   <version>1.0.0</version>
+   <packaging>jar</packaging>
+
+   <name>NetXMS WebGL resources</name>
+   <description>
+      Bundled browser-side libraries for NetXMS WebGL views (e.g. the 3D rack view).
+      Resource-only jar: ships three.js (with OrbitControls) on the classpath under /webgl/.
+   </description>
+
+   <licenses>
+      <!-- The bundled JavaScript (three.js, OrbitControls) is MIT-licensed. -->
+      <license>
+         <name>MIT License</name>
+         <url>https://github.com/mrdoob/three.js/blob/dev/LICENSE</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <!-- three.js revision bundled in src/main/resources/webgl/three.min.js -->
+      <threejs.version>r147</threejs.version>
+   </properties>
+
+   <build>
+      <!-- Pull in src/main/resources (the default) and nothing else; no compile step. -->
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+               <archive>
+                  <manifestEntries>
+                     <Bundled-ThreeJS-Version>${threejs.version}</Bundled-ThreeJS-Version>
+                  </manifestEntries>
+               </archive>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+</project>
