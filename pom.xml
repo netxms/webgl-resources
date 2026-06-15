@@ -14,6 +14,7 @@
       Bundled browser-side libraries for NetXMS WebGL views (e.g. the 3D rack view).
       Resource-only jar: ships three.js (with OrbitControls) on the classpath under /webgl/.
    </description>
+   <url>https://github.com/netxms/webgl-resources</url>
 
    <licenses>
       <!-- The bundled JavaScript (three.js, OrbitControls) is MIT-licensed. -->
@@ -24,11 +25,75 @@
       </license>
    </licenses>
 
+   <scm>
+      <connection>scm:git:https://github.com/netxms/webgl-resources</connection>
+      <developerConnection>scm:git:ssh://github.com/netxms/webgl-resources.git</developerConnection>
+      <url>https://github.com/netxms/webgl-resources</url>
+   </scm>
+   <developers>
+      <developer>
+         <id>alex.kirhenshtein</id>
+         <name>Alex Kirhenshtein</name>
+         <email>alk@netxms.org</email>
+         <organization>Raden Solutions</organization>
+         <organizationUrl>https://radensolutions.com</organizationUrl>
+         <roles>
+            <role>developer</role>
+         </roles>
+         <timezone>Europe/Riga</timezone>
+      </developer>
+   </developers>
+   <issueManagement>
+      <system>GitHub Issues</system>
+      <url>https://github.com/netxms/webgl-resources/issues</url>
+   </issueManagement>
+
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <!-- three.js revision bundled in src/main/resources/webgl/three.min.js -->
       <threejs.version>r147</threejs.version>
    </properties>
+
+   <profiles>
+      <profile>
+         <id>central</id>
+         <distributionManagement>
+            <repository>
+               <id>central</id>
+               <url>https://central.sonatype.com/api/v1/publisher</url>
+            </repository>
+         </distributionManagement>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>3.2.8</version>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.sonatype.central</groupId>
+                  <artifactId>central-publishing-maven-plugin</artifactId>
+                  <version>0.10.0</version>
+                  <extensions>true</extensions>
+                  <configuration>
+                     <publishingServerId>central</publishingServerId>
+                     <autoPublish>false</autoPublish>
+                     <waitUntil>published</waitUntil>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 
    <build>
       <plugins>
@@ -43,6 +108,38 @@
                   </manifestEntries>
                </archive>
             </configuration>
+            <executions>
+               <!-- Resource-only jar: no Java to document, so attach an empty javadoc jar to satisfy Maven Central. -->
+               <execution>
+                  <id>empty-javadoc-jar</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <classifier>javadoc</classifier>
+                     <classesDirectory>${project.build.directory}/empty-javadoc</classesDirectory>
+                     <forceCreation>true</forceCreation>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <!-- Resource-only jar: no Java sources, so attach the resources as the source jar to satisfy Maven Central. -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar-no-fork</goal>
+                  </goals>
+                  <configuration>
+                     <forceCreation>true</forceCreation>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
       </plugins>
    </build>
